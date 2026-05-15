@@ -9,13 +9,22 @@ const APPS_SCRIPT_URL =
 const TOKEN = "thehim2026";
 
 async function callAppsScript(payload) {
-  const res = await fetch(APPS_SCRIPT_URL, {
-    method: "POST",
-    headers: { "Content-Type": "text/plain;charset=utf-8" },
-    body: JSON.stringify(payload),
-    redirect: "follow",
-  });
-  return res.json();
+  console.log("[callAppsScript] action:", payload.action, "email:", payload.email || "");
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload),
+      redirect: "follow",
+    });
+    console.log("[callAppsScript] HTTP status:", res.status, "url:", res.url);
+    const text = await res.text();
+    console.log("[callAppsScript] response:", text.substring(0, 300));
+    return JSON.parse(text);
+  } catch (err) {
+    console.error("[callAppsScript] ERROR:", err.message);
+    throw err;
+  }
 }
 
 function buildServer() {
